@@ -20,7 +20,7 @@ While you can jump onto Farmshare without even registering, it is a relatively s
 
 If you go through today and decide this command line interface (CLI) is too much for you, Sherlock also has a really neat service called [Open 
 OnDemand](https://login.sherlock.stanford.edu/pun/sys/dashboard) where you can work in a graphical user interface (GUI) like RStudio or jupyter 
-notebooks. This also has the benefit of being interactive, so instead of, say, outputting visualizations as jpegs in a batch script, you can produce interactive visualizations and iterate mid-script in OpenOndemand. It is, however, a 
+notebooks. This also has the benefit of being interactive, so instead of, say, outputting visualizations as jpegs in a batch script, you can produce interactive visualizations and iterate mid-script in Open OnDemand. It is, however, a 
 really new paradigm for HPC, so you'll likely run into a few snafus along the way.
 
 ## Connecting
@@ -41,13 +41,13 @@ nonsense, we'll be doing all of that stuff here shortly, so it'll make more sens
 ## Moving and seeing in the shell
 
 So you're probably feeling pretty lost right now. There are a couple basics to getting around in the shell, which is essentially the layer upon which graphical operating systems like MacOS and Windows run, and is essentially a more 
-direct, non-graphical way of interacting with your computer. The architecture underneath, though, is the same. Type
+direct, non-graphical way of interacting with your computer. The system underneath, though, is the same. Type
 ```bash
 pwd
 ```
 and you will see something like ```/home/yourUsername/```. ```pwd``` stands for "print working directory" and it tells you "where you are located" in your computer. On a graphical system, this would be like 
-the file you have open in 
-File Explorer. Our directory is empty right now, so let's create some directories (or folders):
+the folder you have open in 
+File Explorer. It's important to remember that when working in the terminal, you are very explicitly located in a specific place on your machine, and the directions you give to the machine will be interpreted from this position. PWD can be used to tell you this position at any given time. Our directory is empty right now, so let's create some directories (or folders):
 ```bash
 mkdir out/ err/ outputs/
 ```
@@ -59,7 +59,7 @@ ls
 which stands for "list", and you should now see our "out", "err", and "outputs" directories. If you type ```cd out``` then the ```Tab``` button, the shell will complete your command to ```cd outputs```. 
 Because ```cd``` means "change 
 directory", when you press ```Enter```, you will move into the "outputs" directory. You can```pwd``` to confirm you're in ```home/Username/outputs/``` now, a place that didn't exist until you made it a 
-second ago! We made this and the other directories because we're going to be directing the outputs of our script to them in a second. 
+second ago! We made this and the other directories because we're going to be directing the outputs of our script to them shortly. 
 
 ## Exploring and Running Code
 To get to our scripts, which I've set up already for the purposes of 
@@ -68,7 +68,9 @@ time, we need to:
 ```bash
 cd /farmshare/home/groups/srcc/cesta_workshop/
 ```
-to move there, If you ```ls``` you'll a few directories: "corpus", "huggingface", and "conda". 
+to move there. One thing to note with this "file path" is that it is what is called an "absolute filepath". I said before that commands in the terminal a very depended on where you yourself are located. Commands based on where you are currently located use "relative filepaths". So to move from /outputs/ with a relative filepath I would do something like cd ../../../farmshare/home/groups/srcc/cesta_workshop. The three ".."s mean move up one level from where I am: these directions, as I said, are moving relative to where you currently are. The directions starting with "farmshare" however, are moving from an absolute location, the "root" directory for the system. While it's usually easier to use relative paths while you're just moving around on a system, using absolute paths in code can make it more resilient, since that path won't change based on your location.
+
+With that said, if you ```ls``` here you'll see a few directories: "corpus", "huggingface", and "conda". 
 
 ![cestadir](/images/cestadir.png)
 

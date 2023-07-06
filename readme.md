@@ -168,3 +168,8 @@ regardless of how you engage with our resources.
 My git [repo](https://github.com/bcritt1/H-S-Documentation/tree/main/) contains scripts and documentation for many processes, tailored for use on Sherlock. Sherlock itself has a lot of good [documentation](https://www.sherlock.stanford.edu/docs/). Finally, Quinn Dombrowski has been working on a lot of good information for Humanists in HPC [here](https://dh-stanford.github.io/hpcforhumanists/intro.html).
 
 [bcritt@stanford.edu](mailto:bcritt@stanford.edu) with questions.
+
+## Bonus Exercises
+1. There is an example sbatch script in our CESTA directory. It has a couple small errors. See if you can fix them and get the job to run on GPU.
+
+2. Generally, it is considered best practice to run your IO from scratch ```/scratch/users/SUNet/```. Edit the sbatch and py scripts so they are looking for your inputs and writing out your err, out, and json files to scratch. Hint: you'll also need to make sure the correct folders are located in the correct places for this to work. Make sure you're using "cp" (copy) rather than "mv" so you're not moving files others are using.

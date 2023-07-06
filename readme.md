@@ -68,7 +68,12 @@ time, we need to:
 ```bash
 cd /farmshare/home/groups/srcc/cesta_workshop/
 ```
-to move there. One thing to note with this "file path" is that it is what is called an "absolute filepath". I said before that commands in the terminal a very depended on where you yourself are located. Commands based on where you are currently located use "relative filepaths". So to move from /outputs/ with a relative filepath I would do something like cd ../../../farmshare/home/groups/srcc/cesta_workshop. The three ".."s mean move up one level from where I am: these directions, as I said, are moving relative to where you currently are. The directions starting with "farmshare" however, are moving from an absolute location, the "root" directory for the system. While it's usually easier to use relative paths while you're just moving around on a system, using absolute paths in code can make it more resilient, since that path won't change based on your location.
+to move there. One thing to note with this "file path" is that it is what is called an "absolute filepath". I said before that commands in the terminal a very depended on where you yourself are located. Commands based on where you are currently located use "relative filepaths". So to move from /outputs/ with a relative filepath I would do something like cd 
+```bash
+../../../farmshare/home/groups/srcc/cesta_workshop
+```
+
+ The three ".."s mean move up one level from where I am: these directions, as I said, are moving relative to where you currently are. The directions starting with "farmshare" however, are moving from an absolute location, the "root" directory for the system. While it's usually easier to use relative paths while you're just moving around on a system, using absolute paths in code can make it more resilient, since that path won't change based on your location.
 
 With that said, if you ```ls``` here you'll see a few directories: "corpus", "huggingface", and "conda". 
 

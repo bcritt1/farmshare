@@ -33,7 +33,7 @@ ssh SUNetID@rice.stanford.edu
 ```
 You'll be prompted for your Stanford password, which you can copy and paste here (there will be no cursor marker, so it's easiest to just C + P). Press enter, complete the 2FA, and then you'll see some cool graphics.
 
-![farmshare](/images/farmshare.png)
+![farmshare](https://github.com/bcritt1/H-S-Documentation/blob/main/images/farmshare.png)
 
 In this window, now, you are on a Linux machine somewhere else in the world. This is a log-in node, where you can work to set-up any jobs you want to run, and submit them to a compute node on the Farmshare cluster. If that sounds like 
 nonsense, we'll be doing all of that stuff here shortly, so it'll make more sense in a bit.
@@ -72,7 +72,7 @@ to move there. One thing to note with this "file path" is that it is what is cal
 
 With that said, if you ```ls``` here you'll see a few directories: "corpus", "huggingface", and "conda". 
 
-![cestadir](/images/cestadir.png)
+![cestadir](https://github.com/bcritt1/H-S-Documentation/blob/main/images/cestadir.png)
 
 The first contains a sample corpus representing the collected works of Ralph Waldo Emerson. These are our inputs, the material we are feeding into our script: I had this corpus on hand, but it could be 
 any collection of texts you want to investigate. "conda" contains an environment that I created that holds the different libraries we'll need to execute our script: normally, you may be doing some of this 
@@ -149,7 +149,7 @@ going to take 10 or more minutes to complete, but we can ```cd``` to that locati
 ```bash
 head /home/userName/outputs/data.json
 ```
-![outputs](/images/outputs.png)
+![outputs](https://github.com/bcritt1/H-S-Documentation/blob/main/images/outputs.png)
 What we see is all Named Entities (proper nouns, more or less) in our inputs categorized as a type of entity, and a confidence score of how likely the computer things it is that they actually are that type 
 of entity. This type of output can be the basis for interesting analyses in its own right (What things interest this writer? Are they more interested in people or political entities?) or as the basis for 
 secondary analyses (extracting everything labelled as a place and mapping them). 
@@ -160,6 +160,6 @@ often expand exponentially with inputs, so anyone looking to do serious digital 
 and how you can take advantage of it here at Stanford with a relatively low barrier to entry. Remember, on Sherlock Open OnDemand offers an even more user-friendly experience, and I'm always here to help 
 regardless of how you engage with our resources. 
 
-My git [repo](https://github.com/bcritt1/H-S-Documentation/blob/main/scripts/farmshare/readme.md) contains scripts and documentation for many processes, tailored for use on Sherlock. Sherlock itself has a lot of good [documentation](https://www.sherlock.stanford.edu/docs/). Finally, Quinn Dombrowski has been working on a lot of good information for Humanists in HPC [here](https://dh-stanford.github.io/hpcforhumanists/intro.html).
+My git [repo](https://github.com/bcritt1/H-S-Documentation/tree/main/) contains scripts and documentation for many processes, tailored for use on Sherlock. Sherlock itself has a lot of good [documentation](https://www.sherlock.stanford.edu/docs/). Finally, Quinn Dombrowski has been working on a lot of good information for Humanists in HPC [here](https://dh-stanford.github.io/hpcforhumanists/intro.html).
 
 [bcritt@stanford.edu](mailto:bcritt@stanford.edu) with questions.

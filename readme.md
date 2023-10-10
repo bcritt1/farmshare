@@ -145,12 +145,12 @@ to run the script and:
 ```bash
 watch squeue -u $USER
 ```
-to watch the queue while it completes. 
+to watch the queue while it completes. To exit the queue screen, type Ctrl + C.
 
 ## Outputs
 
-Because of the file paths we supplied in the .sbatch and .py files, our *.out and *.err files will be routed to home/userName/out and */err, and our outputs will go to home/userName/outputs. The script is 
-going to take 10 or more minutes to complete, but we can ```cd``` to that location to check out our output when it's done. Or you can even check it out from here by giving it a filepath:
+Because of the file paths we supplied in the .sbatch and .py files, our *.out and *.err files will be routed to /home/userName/out and */err, and our outputs will go to /home/userName/outputs. The script is 
+going to take 10 or more minutes to complete, but we can ```cd``` to ``/home/userName/outputs`` location to check out our output when it's done. Or you can even check it out from here by giving it a filepath:
 ```bash
 head /home/userName/outputs/data.json
 ```

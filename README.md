@@ -31,7 +31,7 @@ users can open up their "Powershell" application, and Mac/Linux users can open u
 ```bash
 ssh SUNetID@rice.stanford.edu
 ```
-You'll be prompted for your Stanford password, which you can copy and paste here (there will be no cursor marker, so it's easiest to just C + P). Press enter, complete the 2FA, and then you'll see some cool graphics.
+You will be prompted for your Stanford password, which you can copy and paste here (there will be no cursor marker, so it's easiest to just C + P). Press enter, complete the 2FA, and then you'll see some cool graphics.
 
 ![farmshare](https://github.com/bcritt1/H-S-Documentation/blob/main/images/farmshare.png)
 

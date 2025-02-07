@@ -91,8 +91,8 @@ scheduler schedules job times for people based on the requests they make in thei
 ```bash
 #!/bin/bash						# tells the computer what type of program this is. This will appear at the start of all sbatch (and bash) scripts
 #SBATCH --job-name=huggingface				# gives a name to our job. This can be anything, but like most things in programming, it's good to be descriptive
-#SBATCH --output=/home/%u/out/huggingface.%j		# slurm automatically produces two types of outputs from jobs. These can help you debug if things go wrong. Here I'm routing them to the directories we created earlier.
-#SBATCH --error=/home/%u/err/huggingface.%j		# the err file is usually more helpful, as it outputs any error messages your code produces. Because you're submitting your job and not running interactively, you don't get to see these errors as they happen
+#SBATCH --output=/home/users/%u/out/huggingface.%j	# slurm automatically produces two types of outputs from jobs. These can help you debug if things go wrong. Here I'm routing them to the directories we created earlier.
+#SBATCH --error=/home/users/%u/err/huggingface.%j	# the err file is usually more helpful, as it outputs any error messages your code produces. Because you're submitting your job and not running interactively, you don't get to see these errors as they happen
 #SBATCH -c 1						# tells slurm to run the job on 1 core. Unless you've parallelized your code so it can run separate processes on separate hardware, this will usually be 1
 #SBATCH --mem=32GB					# tells slurm how much memory to use. For many users, this is the primary benefit of hpc. My pretty beefy machine at home has 32 GB of RAM, and that's probably 2-4x what most people have. However, I couldn't use all those 32GB for a job, because the computer itself needs memory to run. On an hpc system, you can devote more memory (and exactly the amount) you need for a job. If jobs are failing on your personal machines, you may ***need*** hpc to do your research.
 							# Everything below here (the lines without #s) are shell commands and not communicating with slurm. 
@@ -110,29 +110,28 @@ to see our python code. It too is relatively straightforward. We import a couple
 # Import packages
 import os
 import json
+from transformers import pipeline
+from transformers.models.roberta import RobertaTokenizer, RobertaForTokenClassification
+import torch
 
 # Read in corpus
 user = os.getenv('USER')
 corpusdir = '/farmshare/home/groups/srcc/cesta_workshop/corpus/'
-#corpusdir = '/scratch/users/{}/corpus/'.format(user)
 corpus = []
 for infile in os.listdir(corpusdir):
     with open(corpusdir+infile, errors='ignore') as fin:
         corpus.append(fin.read())
 
 # Import language models and pipeline elements
-from transformers import AutoTokenizer, AutoModelForTokenClassification
-tokenizer = AutoTokenizer.from_pretrained("Jean-Baptiste/roberta-large-ner-english")
-model = AutoModelForTokenClassification.from_pretrained("Jean-Baptiste/roberta-large-ner-english")
-
+tokenizer = RobertaTokenizer.from_pretrained("Jean-Baptiste/roberta-large-ner-english")
+model = RobertaForTokenClassification.from_pretrained("Jean-Baptiste/roberta-large-ner-english")
 
 # Process corpus
-from transformers import pipeline
 nlp = pipeline('ner', model=model, tokenizer=tokenizer, aggregation_strategy="simple")
 entities = nlp(corpus)
 
-# Export data to json
-with open('/scratch/users/{}/outputs/data.json'.format(user), 'w', encoding='utf-8') as f:
+# Write data to json
+with open('/scratch/users/{}/outputs/dataRoberta.json'.format(user), 'w', encoding='utf-8') as f:
     json.dump(str(entities), f, ensure_ascii=False, indent=4)
 ```
 
@@ -142,16 +141,16 @@ sbatch huggingface.sbatch
 ```
 to run the script and:
 ```bash
-watch squeue -u $USER
+watch squeue --me
 ```
 to watch the queue while it completes. To exit the queue screen, type Ctrl + C.
 
 ## Outputs
 
 Because of the file paths we supplied in the .sbatch and .py files, our *.out and *.err files will be routed to `~/out` and `~/err`, and our outputs will go to `/scratch/users/$USER/outputs`. The script is 
-going to take 10 or more minutes to complete, but we can `cd` to `/home/users/$USER/outputs` location to check out our output when it's done. Or you can even check it out from here by giving it a filepath:
+going to take 10 or more minutes to complete, but we can `cd` to `/scratch/users/$USER/outputs` location to check out our output when it's done. Or you can even check it out from here by giving it a filepath:
 ```bash
-head /scratch/users/$USER/outputs/data.json
+head /scratch/users/$USER/outputs/robertaData.json
 ```
 ![outputs](https://github.com/bcritt1/H-S-Documentation/blob/main/images/outputs.png)
 What we see is all Named Entities (proper nouns, more or less) in our inputs categorized as a type of entity, and a confidence score of how likely the computer things it is that they actually are that type 

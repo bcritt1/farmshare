@@ -4,9 +4,9 @@ Farmshare is an open high powered computing (HPC) learning environment where any
 
 ## Overview
 
-In this workshop, we'll be running a named entity recognizer on Ralph Waldo Emerson's ouevre. We'll be using a machine learning platform called huggingface, through which we will leverage a large language 
-model called "RoBERTa", which is based on "BERT" 
-(Bidirectional Encoder Representations from Transformers). RoBERTa is a cutting edge model that rivals GPT in analytical tasks (though it can't generate responses like GPT). Our output will be a .json file 
+In this workshop, we'll be running a named entity recognizer on Ralph Waldo Emerson's ouevre. We'll be using a machine learning platform called huggingface, through which we will leverage a transformer-based language  
+model called "RoBERTa", itself based on "BERT" 
+(Bidirectional Encoder Representations from Transformers). RoBERTa is an older, but performant model that rivals GPT in analytical tasks (though it can't generate responses like GPT). Our output will be a .json file 
 with all of the named entities 
 (important people, places, things) in this text corpus. Having the computer encode and return certain types of information from large text corpora is an important retrieval task for doing higher level things like social network analysis, 
 knowledge graphing, mapping references, etc. 
@@ -21,12 +21,12 @@ While you can jump onto Farmshare without even registering, it is a relatively s
 If you go through today and decide this command line interface (CLI) is too much for you, Sherlock also has a really neat service called [Open 
 OnDemand](https://login.sherlock.stanford.edu/pun/sys/dashboard) where you can work in a graphical user interface (GUI) like RStudio or jupyter 
 notebooks. This also has the benefit of being interactive, so instead of, say, outputting visualizations as jpegs in a batch script, you can produce interactive visualizations and iterate mid-script in Open OnDemand. It is, however, a 
-really new paradigm for HPC, so you'll likely run into a few snafus along the way.
+really new paradigm for HPC, so you'll likely run into a few snafus along the way. Also, while interactivity can be nice, a benefit of traditional HPC computing is not having to "babysit" your processes: you can submit code, walk away, and come back later, without worrying about your computer shutting down or going to sleep.
 
 ## Connecting
 
 To connect to the HPC cluster, we need to use a program called ssh (secure shell protocol). This is easy on Mac and Linux, but Windows requires a little extra work. To install the OpenSSH Client on Windows 10 or Windows 11, open the 
-Settings app, then navigate to Apps > Apps & Features > Optional Features.  Click “Add a Feature,” then scroll through the optional features until you locate “OpenSSH Client.” Tick the box, then click “Install.” At this point, Windows 
+Settings app, then navigate to Apps > Apps & Features > Optional Features.  Click “Add a Feature,” then scroll through the optional features until you locate “OpenSSH Client.” Tick the box, then click “Install.” Installing WSL or 3rd party programs like git bash or putty also works. At this point, Windows 
 users can open up their "Powershell" application, and Mac/Linux users can open up "Terminal" and all of us can type
 ```bash
 ssh SUNetID@rice.stanford.edu
@@ -45,21 +45,20 @@ direct, non-graphical way of interacting with your computer. The system undernea
 ```bash
 pwd
 ```
-and you will see something like ```/home/yourUsername/```. ```pwd``` stands for "print working directory" and it tells you "where you are located" in your computer. On a graphical system, this would be like 
+and you will see something like `/home/yourUsername/`. `pwd` stands for "print working directory" and it tells you "where you are located" in your computer. On a graphical system, this would be like 
 the folder you have open in 
 File Explorer. It's important to remember that when working in the terminal, you are very explicitly located in a specific place on your machine, and the directions you give to the machine will be interpreted from this position. PWD can be used to tell you this position at any given time. Our directory is empty right now, so let's create some directories (or folders):
 ```bash
-mkdir out/ err/ outputs/
+mkdir out/ err/ /scratch/users/$USER/outputs/
 ```
 which reads as "make directory" and then the directories you want to make. 
 Now type:
 ```bash
 ls
 ```
-which stands for "list", and you should now see our "out", "err", and "outputs" directories. If you type ```cd out``` then the ```Tab``` button, the shell will complete your command to ```cd outputs```. 
-Because ```cd``` means "change 
-directory", when you press ```Enter```, you will move into the "outputs" directory. You can```pwd``` to confirm you're in ```home/Username/outputs/``` now, a place that didn't exist until you made it a 
-second ago! We made this and the other directories because we're going to be directing the outputs of our script to them shortly. 
+which stands for "list", and you should now see our "out" and "err". If you type `cd /scratch/users/$USER/outputs` and hit the `Tab` button after the first few letters in each level, the shell will begin completing your commands. 
+Because `cd` means "change directory", when you press `Enter`, you will move into the "outputs" directory. You can `pwd` to confirm you're in `/scratch/users/$USER/outputs` now, a place that didn't exist until you made it a 
+second ago! We made this and the other directories because we're going to be directing the outputs of our script to them shortly. Note that the "outputs" directory looks a little different. We gave it a filepath and created it "at a distance" in "scratch", the fast storage section of any HPC system. You'll want to put your inputs and outputs in $SCRATCH in most instances. 
 
 ## Exploring and Running Code
 To get to our scripts, which I've set up already for the purposes of 
@@ -68,21 +67,21 @@ time, we need to:
 ```bash
 cd /farmshare/home/groups/srcc/cesta_workshop/
 ```
-to move there. One thing to note with this "file path" is that it is what is called an "absolute filepath". I said before that commands in the terminal a very depended on where you yourself are located. Commands based on where you are currently located use "relative filepaths". So to move from /outputs/ with a relative filepath I would do something like cd 
+to move there. One thing to note with this "file path" is that it is what is called an "absolute filepath". I said before that commands in the terminal a very dependant on where you yourself are located. Commands based on where you are currently located use "relative filepaths". So to move from /outputs/ with a relative filepath I would do something like cd 
 ```bash
 ../../../farmshare/home/groups/srcc/cesta_workshop
 ```
 
  The three ".."s mean move up one level from where I am: these directions, as I said, are moving relative to where you currently are. The directions starting with "farmshare" however, are moving from an absolute location, the "root" directory for the system. While it's usually easier to use relative paths while you're just moving around on a system, using absolute paths in code can make it more resilient, since that path won't change based on your location.
 
-With that said, if you ```ls``` here you'll see a few directories: "corpus", "huggingface", and "miniconda3". 
+With that said, if you `ls` here you'll see a few directories: "corpus", "huggingface", and "miniconda3". 
 
 ![cestadir](https://github.com/bcritt1/H-S-Documentation/blob/main/images/cestadir.png)
 
 The first contains a sample corpus representing the collected works of Ralph Waldo Emerson. These are our inputs, the material we are feeding into our script: I had this corpus on hand, but it could be 
-any collection of texts you want to investigate. "conda" contains an environment that I created that holds the different libraries we'll need to execute our script: normally, you may be doing some of this 
+any collection of texts you want to investigate. "miniconda3" contains an environment that I created that holds the different libraries we'll need to execute our script: normally, you may be doing some of this 
 work, but for time, I did it. That said, my script library should make a lot of this labor "plug & play", so the technical barrier should be relatively low regardless. Finally, the "huggingface" directory 
-holds our scripts. Let's ```cd``` there.
+holds our scripts. Let's look at it:.
 
 ```bash
 cat huggingface.sbatch
@@ -133,7 +132,7 @@ nlp = pipeline('ner', model=model, tokenizer=tokenizer, aggregation_strategy="si
 entities = nlp(corpus)
 
 # Export data to json
-with open('/home/{}/outputs/data.json'.format(user), 'w', encoding='utf-8') as f:
+with open('/scratch/users/{}/outputs/data.json'.format(user), 'w', encoding='utf-8') as f:
     json.dump(str(entities), f, ensure_ascii=False, indent=4)
 ```
 
@@ -149,10 +148,10 @@ to watch the queue while it completes. To exit the queue screen, type Ctrl + C.
 
 ## Outputs
 
-Because of the file paths we supplied in the .sbatch and .py files, our *.out and *.err files will be routed to /home/userName/out and */err, and our outputs will go to /home/userName/outputs. The script is 
-going to take 10 or more minutes to complete, but we can ```cd``` to ``/home/userName/outputs`` location to check out our output when it's done. Or you can even check it out from here by giving it a filepath:
+Because of the file paths we supplied in the .sbatch and .py files, our *.out and *.err files will be routed to `~/out` and `~/err`, and our outputs will go to `/scratch/users/$USER/outputs`. The script is 
+going to take 10 or more minutes to complete, but we can `cd` to `/home/users/$USER/outputs` location to check out our output when it's done. Or you can even check it out from here by giving it a filepath:
 ```bash
-head /home/userName/outputs/data.json
+head /scratch/users/$USER/outputs/data.json
 ```
 ![outputs](https://github.com/bcritt1/H-S-Documentation/blob/main/images/outputs.png)
 What we see is all Named Entities (proper nouns, more or less) in our inputs categorized as a type of entity, and a confidence score of how likely the computer things it is that they actually are that type 
@@ -163,7 +162,9 @@ secondary analyses (extracting everything labelled as a place and mapping them).
 This process took about 15 minutes on 32 GB of RAM, working on a relatively small (130 works) corpus. Compute time will 
 often expand exponentially with inputs, so anyone looking to do serious digital research of this type may *need* to use HPC resources. I'm hoping this workshop gave you an idea of what HPC is, how it works, 
 and how you can take advantage of it here at Stanford with a relatively low barrier to entry. Remember, on Sherlock Open OnDemand offers an even more user-friendly experience, and I'm always here to help 
-regardless of how you engage with our resources. 
+regardless of how you engage with our resources.
+
+Next steps in this process might be filtering this file to return only the locations--`grep "LOC" data.json`--or only the people--`grep "PER" data.json` and feeding that into a tool like [Palladio](https://hdlab.stanford.edu/palladio/) to create a geographic or social network map. 
 
 My git [repo](https://github.com/bcritt1/H-S-Documentation/tree/main/) contains scripts and documentation for many processes, tailored for use on Sherlock. Sherlock itself has a lot of good [documentation](https://www.sherlock.stanford.edu/docs/). Finally, Quinn Dombrowski has been working on a lot of good information for Humanists in HPC [here](https://dh-stanford.github.io/hpcforhumanists/intro.html).
 

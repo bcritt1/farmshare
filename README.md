@@ -135,7 +135,7 @@ with open('/scratch/users/{}/outputs/dataRoberta.json'.format(user), 'w', encodi
     json.dump(str(entities), f, ensure_ascii=False, indent=4)
 ```
 
-Now that we know what they do, the scripts are ready to run. We submit the .sbatch file to Slurm with the sbatch command. The sbatch, in turn, give Slurm directions and tells it to run our .py file.
+At the end here is a switch to also create a separate CSV containing only a specified entry type (PER, LOC, etc). By default, I have it set to on, and to create a CSV of person and location data, which will allow us to do a quick data sketch in Palladio if time allows. Now that we know what they do, the scripts are ready to run. We submit the .sbatch file to Slurm with the sbatch command. The sbatch, in turn, give Slurm directions and tells it to run our .py file.
 ```bash
 sbatch huggingface.sbatch
 ```

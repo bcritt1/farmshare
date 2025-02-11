@@ -6,7 +6,7 @@
 #SBATCH -c 1
 #SBATCH --mem=32GB
 
-#source /home/users/$USER/.bashrc
-source /home/groups/srcc/cesta_workshop/miniconda3/huggingface/bin/activate
-#conda activate /farmshare/home/groups/srcc/cesta_workshop/miniconda3/envs/huggingface
+source /home/groups/srcc/cesta_workshop/miniconda3/bin/activate
+conda activate huggingface
+
 python3 /home/groups/srcc/cesta_workshop/farmshare/huggingface.py

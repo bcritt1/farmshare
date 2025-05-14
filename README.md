@@ -18,8 +18,8 @@ Stanford. This is part of a larger script [library](https://github.com/bcritt1/H
 
 While you can jump onto Farmshare without even registering, it is a relatively small cluster that isn't meant for heavy-duty research. To get on Sherlock, you need to be approved by a PI, but this can be provided by your advisor or potentially CESTA given your affiliation.
 
-If you go through today and decide this command line interface (CLI) is too much for you, Sherlock also has a really neat service called [Open 
-OnDemand](https://login.sherlock.stanford.edu/pun/sys/dashboard) where you can work in a graphical user interface (GUI) like RStudio or jupyter 
+If you go through today and decide this command line interface (CLI) is too much for you, Farmshare also has a really neat service called [Open 
+OnDemand](https://ondemand.farmshare.stanford.edu) where you can work in a graphical user interface (GUI) like RStudio or jupyter 
 notebooks. This also has the benefit of being interactive, so instead of, say, outputting visualizations as jpegs in a batch script, you can produce interactive visualizations and iterate mid-script in Open OnDemand. It is, however, a 
 really new paradigm for HPC, so you'll likely run into a few snafus along the way.
 
@@ -29,7 +29,7 @@ To connect to the HPC cluster, we need to use a program called ssh (secure shell
 Settings app, then navigate to Apps > Apps & Features > Optional Features.  Click “Add a Feature,” then scroll through the optional features until you locate “OpenSSH Client.” Tick the box, then click “Install.” At this point, Windows 
 users can open up their "Powershell" application, and Mac/Linux users can open up "Terminal" and all of us can type
 ```bash
-ssh SUNetID@rice.stanford.edu
+ssh SUNetID@login.farmshare.stanford.edu
 ```
 You will be prompted for your Stanford password, which you can copy and paste here (there will be no cursor marker, so it's easiest to just C + P). Press enter, complete the 2FA, and then you'll see some cool graphics.
 
@@ -49,7 +49,7 @@ and you will see something like ```/home/yourUsername/```. ```pwd``` stands for 
 the folder you have open in 
 File Explorer. It's important to remember that when working in the terminal, you are very explicitly located in a specific place on your machine, and the directions you give to the machine will be interpreted from this position. PWD can be used to tell you this position at any given time. Our directory is empty right now, so let's create some directories (or folders):
 ```bash
-mkdir out/ err/ outputs/
+mkdir out/ err/ /scratch/users/$USER/outputs/
 ```
 which reads as "make directory" and then the directories you want to make. 
 Now type:
@@ -66,23 +66,14 @@ To get to our scripts, which I've set up already for the purposes of
 time, we need to: 
 
 ```bash
-cd /farmshare/home/groups/srcc/cesta_workshop/
+cd /farmshare/learning/farmshare
 ```
-to move there. One thing to note with this "file path" is that it is what is called an "absolute filepath". I said before that commands in the terminal a very depended on where you yourself are located. Commands based on where you are currently located use "relative filepaths". So to move from /outputs/ with a relative filepath I would do something like cd 
-```bash
-../../../farmshare/home/groups/srcc/cesta_workshop
-```
+to move there.
 
- The three ".."s mean move up one level from where I am: these directions, as I said, are moving relative to where you currently are. The directions starting with "farmshare" however, are moving from an absolute location, the "root" directory for the system. While it's usually easier to use relative paths while you're just moving around on a system, using absolute paths in code can make it more resilient, since that path won't change based on your location.
-
-With that said, if you ```ls``` here you'll see a few directories: "corpus", "huggingface", and "miniconda3". 
 
 ![cestadir](https://github.com/bcritt1/H-S-Documentation/blob/main/images/cestadir.png)
 
-The first contains a sample corpus representing the collected works of Ralph Waldo Emerson. These are our inputs, the material we are feeding into our script: I had this corpus on hand, but it could be 
-any collection of texts you want to investigate. "conda" contains an environment that I created that holds the different libraries we'll need to execute our script: normally, you may be doing some of this 
-work, but for time, I did it. That said, my script library should make a lot of this labor "plug & play", so the technical barrier should be relatively low regardless. Finally, the "huggingface" directory 
-holds our scripts. Let's ```cd``` there.
+If we ```ls``` here we can see our files. Huggingface.sbatch is our sbatch file. We can inspect it with:
 
 ```bash
 cat huggingface.sbatch
@@ -97,9 +88,8 @@ scheduler schedules job times for people based on the requests they make in thei
 #SBATCH -c 1						# tells slurm to run the job on 1 core. Unless you've parallelized your code so it can run separate processes on separate hardware, this will usually be 1
 #SBATCH --mem=32GB					# tells slurm how much memory to use. For many users, this is the primary benefit of hpc. My pretty beefy machine at home has 32 GB of RAM, and that's probably 2-4x what most people have. However, I couldn't use all those 32GB for a job, because the computer itself needs memory to run. On an hpc system, you can devote more memory (and exactly the amount) you need for a job. If jobs are failing on your personal machines, you may ***need*** hpc to do your research.
 							# Everything below here (the lines without #s) are shell commands and not communicating with slurm. 
-source /farmshare/home/groups/srcc/cesta_workshop/miniconda3/bin/activate		# activates the anaconda environment I set up, which basically contains the python libraries we invoke in our py 
-script
-python3 /farmshare/home/groups/srcc/cesta_workshop/huggingface/huggingface.py		# runs our py script with python3
+ml python/3.12						#loads python
+python3 /farmshare/learning/farmshare/huggingface.py		# runs our py script with python3
 ```
 Now
 ```bash
@@ -111,10 +101,12 @@ to see our python code. It too is relatively straightforward. We import a couple
 # Import packages
 import os
 import json
+import torch
+from transformers import AutoTokenizer, AutoModelForTokenClassification
 
 # Read in corpus
 user = os.getenv('USER')
-corpusdir = '/farmshare/home/groups/srcc/cesta_workshop/corpus/'
+corpusdir = '/farmshare/learning/data/corpus/emerson'
 #corpusdir = '/scratch/users/{}/corpus/'.format(user)
 corpus = []
 for infile in os.listdir(corpusdir):
@@ -122,7 +114,6 @@ for infile in os.listdir(corpusdir):
         corpus.append(fin.read())
 
 # Import language models and pipeline elements
-from transformers import AutoTokenizer, AutoModelForTokenClassification
 tokenizer = AutoTokenizer.from_pretrained("Jean-Baptiste/roberta-large-ner-english")
 model = AutoModelForTokenClassification.from_pretrained("Jean-Baptiste/roberta-large-ner-english")
 
@@ -152,7 +143,7 @@ to watch the queue while it completes. To exit the queue screen, type Ctrl + C.
 Because of the file paths we supplied in the .sbatch and .py files, our *.out and *.err files will be routed to /home/userName/out and */err, and our outputs will go to /home/userName/outputs. The script is 
 going to take 10 or more minutes to complete, but we can ```cd``` to ``/home/userName/outputs`` location to check out our output when it's done. Or you can even check it out from here by giving it a filepath:
 ```bash
-head /home/userName/outputs/data.json
+head /scratch/users/$USER/outputs/data.json
 ```
 ![outputs](https://github.com/bcritt1/H-S-Documentation/blob/main/images/outputs.png)
 What we see is all Named Entities (proper nouns, more or less) in our inputs categorized as a type of entity, and a confidence score of how likely the computer things it is that they actually are that type 
